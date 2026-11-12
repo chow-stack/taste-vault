@@ -13,18 +13,11 @@ Drop in screenshots and links. Claude Code writes each one a short style sheet (
 
 </div>
 
-<!--
-  SCREENSHOT: save a screenshot of the app as docs/screenshot.png (about 2400×1500 looks sharp).
-  To show separate light and dark versions, save docs/screenshot-light.png and docs/screenshot-dark.png
-  and swap the <img> below for:
-
+<p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
-    <img alt="Taste Vault showing a sheet of design references with the notes panel open" src="docs/screenshot-light.png">
+    <img alt="Taste Vault showing a sheet of design references with the notes panel open on a video clip" src="docs/screenshot-light.png" width="100%">
   </picture>
--->
-<p align="center">
-  <img alt="Taste Vault showing a sheet of design references with the notes panel open" src="docs/screenshot.png" width="100%">
 </p>
 
 ## Why
