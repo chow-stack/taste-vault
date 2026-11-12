@@ -17,7 +17,13 @@ export function Inbox({ items, root, onChanged }: { items: InboxItem[]; root: st
       <ul>
         {items.map((i) => (
           <li key={i.id}>
-            {i.image ? <img src={i.image} alt="" /> : <span className="ph">URL</span>}
+            {i.video ? (
+              <video src={`${i.video}#t=0.5`} muted playsInline preload="metadata" aria-hidden="true" />
+            ) : i.image ? (
+              <img src={i.image} alt="" />
+            ) : (
+              <span className="ph">URL</span>
+            )}
             <span title={i.name}>{i.name.replace(/^https?:\/\//, "")}</span>
             <button
               aria-label={`Remove ${i.name}`}

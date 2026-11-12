@@ -86,9 +86,11 @@ Then open **http://localhost:4173**.
 
 ## Adding references
 
-1. Drop screenshots anywhere on the window, or paste a link into the box in the left rail. They wait under **Waiting for notes**.
+1. Drop screenshots or short video clips (MP4, MOV or WebM) anywhere on the window, or paste a link into the box in the left rail. They wait under **Waiting for notes**.
 2. Click **Copy the request**, then paste it into Claude Code, opened in this folder.
 3. Claude captures any links, writes the notes and files each reference. The frames appear on the sheet as each one is written.
+
+Clips play on the sheet when you hover over them. Claude reads them as a series of stills and adds a **Motion** section: what sets the motion off, what moves, in what order, and roughly how long it takes. This needs ffmpeg (`brew install ffmpeg`). Clips work best when they're under about 20 seconds and show one interaction.
 
 Click a frame to open its notes. Write your own in **My note**; it saves to the file as you type.
 

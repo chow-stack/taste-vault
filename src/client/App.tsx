@@ -79,8 +79,8 @@ export function App() {
 
   const addFiles = useCallback(
     async (list: FileList | File[]) => {
-      const files = [...list].filter((f) => f.type.startsWith("image/"));
-      if (!files.length) return setAddError("Only image files can go in. Try a PNG, JPG or WebP screenshot.");
+      const files = [...list].filter((f) => f.type.startsWith("image/") || f.type.startsWith("video/"));
+      if (!files.length) return setAddError("Only images and video clips can go in. Try a screenshot, or an MP4, MOV or WebM clip.");
       try {
         await api.addFiles(files);
         setAddError("");
@@ -111,7 +111,7 @@ export function App() {
     return () => removeEventListener("keydown", onKey);
   }, [close, step, toggleTheme]);
 
-  // a screenshot dropped anywhere on the window goes into the inbox
+  // a screenshot or clip dropped anywhere on the window goes into the inbox
   useEffect(() => {
     const over = (e: DragEvent) => e.preventDefault();
     const drop = (e: DragEvent) => {
@@ -160,7 +160,7 @@ export function App() {
           </div>
         ) : !state ? null : !refs.length ? (
           <div className="sheet-msg">
-            <p>The vault is empty. Drop a screenshot or paste a link to start it.</p>
+            <p>The vault is empty. Drop a screenshot or clip, or paste a link, to start it.</p>
           </div>
         ) : !visible.length ? (
           <div className="sheet-msg">

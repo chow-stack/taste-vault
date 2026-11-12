@@ -5,21 +5,24 @@ import type { Reference, Swatch } from "../shared/types.ts";
 
 const list = z.preprocess((v) => (v == null ? [] : Array.isArray(v) ? v : [v]), z.array(z.coerce.string()));
 
+// a plain file name next to the notes, never a path
+const fileName = z.string().regex(/^[\w.-]+$/).refine((f) => !f.startsWith("."), "Must be a file name.");
+
 const Frontmatter = z.object({
   id: z.coerce.string().optional(),
   title: z.string().min(1),
   kind: z.string().default(""),
-  source: z.enum(["screenshot", "link"]).default("screenshot"),
+  source: z.enum(["screenshot", "link", "video"]).default("screenshot"),
   url: z.url().optional(),
-  // a plain file name next to the notes, never a path
-  image: z.string().regex(/^[\w.-]+$/).refine((f) => !f.startsWith("."), "The image must be a file name."),
+  image: fileName,
+  video: fileName.optional(),
   page: z.string().default("Unsorted"),
   look: z.string().default("Unsorted"),
   tags: list.default([]),
   measured: z.boolean().default(false),
 });
 
-export type ParsedReference = Omit<Reference, "image" | "ratio" | "file"> & { imageFile: string };
+export type ParsedReference = Omit<Reference, "image" | "video" | "ratio" | "file"> & { imageFile: string; videoFile?: string };
 
 /** Splits the body into its "## Heading" sections. Text before the first heading is under "". */
 function sections(body: string): Map<string, string> {
@@ -70,6 +73,7 @@ export function parseReference(text: string, slug: string): ParsedReference {
     source: fm.source,
     ...(fm.url ? { url: fm.url } : {}),
     imageFile: fm.image,
+    ...(fm.video ? { videoFile: fm.video } : {}),
     page: fm.page,
     look: fm.look,
     tags: fm.tags,
@@ -78,6 +82,7 @@ export function parseReference(text: string, slug: string): ParsedReference {
     palette: palette(s.get("palette")),
     type: s.get("type") ?? "",
     steal: bullets(s.get("steal this")),
+    motion: bullets(s.get("motion")),
     note: s.get("my note") ?? "",
   };
 }

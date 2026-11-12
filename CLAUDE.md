@@ -6,8 +6,8 @@ A personal, local library of design references. Each reference is an image plus 
 
 When starting front-end work in any project, the references are plain files:
 
-- `vault/references/<slug>.md`: frontmatter (title, kind, page, look, tags, measured) plus vibe, palette, type, three "steal this" notes, and the owner's own note.
-- `vault/references/<slug>.<ext>`: the image. Read it to see the reference.
+- `vault/references/<slug>.md`: frontmatter (title, kind, page, look, tags, measured) plus vibe, palette, type, three "steal this" notes, a Motion section for clips, and the owner's own note.
+- `vault/references/<slug>.<ext>`: the image. Read it to see the reference. Clips also have `<slug>.mp4` (or `.mov`, `.webm`), named in `video:`; the image is a still from it. To study the motion closely, pull frames from the clip with ffmpeg.
 
 Pick references by `page` and `look`, read their notes, look at the images. The owner's note says why they kept it; give it the most weight.
 
@@ -21,6 +21,7 @@ New items wait in `vault/inbox/`. To process them, follow `.claude/skills/taste-
 - `src/client/`: React app (Vite). `App.tsx` holds state; `components/` each have their own CSS file; `styles/tokens.css` is the design system (Light Table look, dark and light).
 - `src/shared/`: types and helpers used by both sides.
 - `scripts/capture.ts`: Playwright capture of a live site for link references.
+- `scripts/frames.ts`: ffmpeg pulls a still, frames and overview sheets from a clip in the inbox (`npm run frames -- <id>`).
 
 Commands: `npm run dev` (app on http://localhost:4173, API on 4174), `npm run check` (types, lint, tests), `npm start` (build and serve on 4173), `npm run setup` (download the capture browser). `PORT`, `API_PORT` and `TASTE_VAULT_DIR` override the defaults.
 

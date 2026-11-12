@@ -28,7 +28,7 @@ function FilterButton({ label, count, active, onClick }: { label: string; count:
 export function Rail({ refs, inbox, root, filters, onFilter, onFiles, onChanged, error, onError }: Props) {
   const toggle = <K extends "page" | "look" | "source">(key: K, value: Filters[K]) =>
     onFilter({ ...filters, [key]: filters[key] === value ? "" : value });
-  const sources: Source[] = ["screenshot", "link"];
+  const sources: Source[] = ["screenshot", "link", "video"];
   const none = !filters.page && !filters.look && !filters.source;
 
   return (

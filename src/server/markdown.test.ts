@@ -79,6 +79,15 @@ describe("parseReference", () => {
       expect(() => parseReference(`---\ntitle: T\nimage: "${image}"\n---\n`, "x")).toThrow();
     }
   });
+
+  it("reads a clip and its motion notes", () => {
+    const r = parseReference(
+      "---\ntitle: Hover\nsource: video\nimage: 08-hover.jpg\nvideo: 08-hover.mp4\n---\n\n## Motion\n- Cards lift 4px on hover\n- About 250ms, easing out\n\n## My note\n",
+      "08-hover",
+    );
+    expect(r).toMatchObject({ source: "video", videoFile: "08-hover.mp4", motion: ["Cards lift 4px on hover", "About 250ms, easing out"] });
+    expect(() => parseReference("---\ntitle: T\nimage: x.jpg\nvideo: ../x.mp4\n---\n", "x")).toThrow();
+  });
 });
 
 describe("writeNote", () => {

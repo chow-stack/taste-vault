@@ -82,6 +82,22 @@ describe("the vault API", () => {
     expect(res.status).toBe(400);
   });
 
+  it("takes video clips, and refuses files that only claim to be one", async () => {
+    // the start of an MP4: a box size, then "ftyp" and a brand
+    const mp4 = Uint8Array.from([0, 0, 0, 24, ...new TextEncoder().encode("ftypisom"), 0, 0, 2, 0]);
+    const form = new FormData();
+    form.append("files", new File([mp4], "hover.mp4", { type: "video/mp4" }));
+    expect((await post("/api/inbox", form)).status).toBe(201);
+    const [clip] = (await state()).inbox;
+    expect(clip).toMatchObject({ source: "video", name: "hover.mp4" });
+    expect(clip?.video).toMatch(/^\/files\/inbox\/.+\.mp4$/);
+    expect((await app.request(clip!.video!)).status).toBe(200);
+
+    const fake = new FormData();
+    fake.append("files", new File(["<script>alert(1)</script>"], "fake.webm", { type: "video/webm" }));
+    expect((await post("/api/inbox", fake)).status).toBe(400);
+  });
+
   it("refuses writes from other sites", async () => {
     const res = await post("/api/inbox/link", "url=linear.app", { origin: "https://evil.example", "content-type": "application/x-www-form-urlencoded" });
     expect(res.status).toBe(403);

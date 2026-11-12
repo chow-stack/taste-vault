@@ -24,7 +24,7 @@ export function filterRefs(refs: Reference[], f: Filters): Reference[] {
     if (f.look && r.look !== f.look) return false;
     if (f.source && r.source !== f.source) return false;
     if (!words.length) return true;
-    const text = [r.title, r.kind, r.vibe, r.type, r.page, r.look, ...r.tags, r.note].join(" ").toLowerCase();
+    const text = [r.title, r.kind, r.vibe, r.type, r.page, r.look, ...r.tags, ...r.motion, r.note].join(" ").toLowerCase();
     return words.every((w) => text.includes(w));
   });
 }
@@ -43,11 +43,12 @@ export function columnCount(width: number, wanted: number, gap: number, minFrame
 
 /** The text copied for Claude from the inspector. */
 export function brief(r: Reference, root: string): string {
-  const estimated = r.measured ? "read from the live CSS" : "estimated from a screenshot";
+  const estimated = r.measured ? "read from the live CSS" : r.source === "video" ? "estimated from a clip" : "estimated from a screenshot";
   return [
     `# ${r.title} (${r.kind || r.page}, from a ${r.source})`,
     `Notes file: ${root}/references/${r.slug}.md`,
     ...(r.url ? [`Live site: ${r.url}`] : []),
+    ...(r.video ? [`Clip: ${root}/references/${decodeURIComponent(r.video.split("/").pop()!)}`] : []),
     "",
     `> ${r.vibe}`,
     "",
@@ -55,6 +56,7 @@ export function brief(r: Reference, root: string): string {
     `Type: ${r.type}`,
     "Steal this:",
     ...r.steal.map((s) => `- ${s}`),
+    ...(r.motion.length ? ["Motion:", ...r.motion.map((m) => `- ${m}`)] : []),
     ...(r.note.trim() ? ["", `My note: ${r.note.trim()}`] : []),
   ].join("\n");
 }
@@ -63,10 +65,12 @@ export function brief(r: Reference, root: string): string {
 export function inboxRequest(items: InboxItem[], root: string): string {
   const shots = items.filter((i) => i.source === "screenshot");
   const links = items.filter((i) => i.source === "link");
+  const clips = items.filter((i) => i.source === "video");
   return [
     `Process my Taste Vault inbox (${root}/inbox): write the notes for each item and file it into the references.`,
     ...(shots.length ? ["", "Screenshots:", ...shots.map((s) => `- ${s.name}`)] : []),
     ...(links.length ? ["", "Links:", ...links.map((l) => `- ${l.name}`)] : []),
+    ...(clips.length ? ["", "Clips (write up the motion too):", ...clips.map((c) => `- ${c.name}`)] : []),
   ].join("\n");
 }
 

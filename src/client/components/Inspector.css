@@ -29,7 +29,7 @@
 .ihead > .lab { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--dim-p); }
 .ihead div { display: flex; gap: 6px; }
 
-.insp figure img { width: 100%; height: auto; max-height: 46vh; object-fit: cover; object-position: top; border-radius: var(--radius); }
+.insp figure img, .insp figure video { width: 100%; height: auto; max-height: 46vh; object-fit: cover; object-position: top; border-radius: var(--radius); }
 .insp .title { font-size: var(--title-size); font-weight: 500; line-height: 0.92; letter-spacing: -0.04em; margin-top: 18px; overflow-wrap: anywhere; }
 .insp .live { display: inline-block; margin-top: 10px; color: var(--dim-p); text-decoration: none; }
 .insp .live:hover { color: var(--panel-text); text-decoration: underline; text-underline-offset: 3px; }
@@ -51,6 +51,10 @@
 .steal { list-style: none; counter-reset: s; }
 .steal li { counter-increment: s; display: grid; grid-template-columns: 1.8em 1fr; padding-bottom: 5px; }
 .steal li::before { content: counter(s, decimal-leading-zero); color: var(--dim-p); font-variant-numeric: tabular-nums; font-size: 0.86em; padding-top: 0.1em; }
+
+/* one line per trigger: the trigger small and dim on the left, what happens on the right */
+.motion div { display: grid; grid-template-columns: 4.6em 1fr; gap: 8px; padding-bottom: 5px; }
+.spec .motion dt { color: var(--dim-p); font-size: 0.86em; padding: 0.1em 0 0; }
 
 .note label { display: flex; justify-content: space-between; gap: 10px; padding: 11px 0 6px; border-top: var(--line) solid var(--line-p); }
 .note label span:last-child { color: var(--dim-p); }

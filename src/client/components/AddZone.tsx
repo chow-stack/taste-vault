@@ -73,16 +73,16 @@ export function AddZone({ onFiles, onAdded, error, onError }: Props) {
         <Grain />
         <input
           type="file"
-          accept="image/*"
+          accept="image/*,video/mp4,video/webm,video/quicktime"
           multiple
-          aria-label="Choose screenshots to add"
+          aria-label="Choose screenshots or clips to add"
           onChange={(e) => {
             if (e.target.files?.length) onFiles(e.target.files);
             e.target.value = "";
           }}
         />
         <span>
-          Drop a screenshot<small>or click to choose a file</small>
+          Drop a screenshot or clip<small>or click to choose a file</small>
         </span>
       </label>
       <form className="link" onSubmit={submit}>

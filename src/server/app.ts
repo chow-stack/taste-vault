@@ -7,11 +7,11 @@ import { HTTPException } from "hono/http-exception";
 import { secureHeaders } from "hono/secure-headers";
 import { streamSSE } from "hono/streaming";
 import { z } from "zod";
-import { IMAGE_TYPES, MAX_UPLOAD_BYTES } from "./config.ts";
+import { IMAGE_TYPES, MAX_UPLOAD_BYTES, VIDEO_TYPES } from "./config.ts";
 import { Vault, VaultError } from "./vault.ts";
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
-const IMAGE_EXT =new Set(Object.values(IMAGE_TYPES).concat(".jpeg"));
+const MEDIA_EXT = new Set([...Object.values(IMAGE_TYPES), ".jpeg", ...Object.values(VIDEO_TYPES)]);
 const LinkBody = z.object({ url: z.string().max(2000) });
 const NoteBody = z.object({ note: z.string().max(20000) });
 
@@ -53,9 +53,9 @@ export function createApp(vault: Vault, options: AppOptions = {}) {
     async (c) => {
       const form = await c.req.formData();
       const files = form.getAll("files").filter((f): f is File => f instanceof File);
-      if (!files.length) throw new VaultError("Only image files can go in. Try a PNG, JPG or WebP screenshot.");
+      if (!files.length) throw new VaultError("Only images and video clips can go in.");
       const added = [];
-      for (const f of files) added.push(await vault.addScreenshot(f));
+      for (const f of files) added.push(await vault.addFile(f));
       return c.json({ added }, 201);
     },
   );
@@ -89,9 +89,9 @@ export function createApp(vault: Vault, options: AppOptions = {}) {
     }),
   );
 
-  // images only: the notes are read through the API
+  // images and clips only: the notes are read through the API
   app.use("/files/*", async (c, next) => {
-    if (!IMAGE_EXT.has(path.extname(c.req.path).toLowerCase())) return c.notFound();
+    if (!MEDIA_EXT.has(path.extname(c.req.path).toLowerCase())) return c.notFound();
     return next();
   });
   app.use(

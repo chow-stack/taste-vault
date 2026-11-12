@@ -42,7 +42,11 @@ export function Inspector({ ref, open, reference: r, root, onClose, onStep }: Pr
           </div>
 
           <figure className="st" style={k(1)}>
-            <img src={r.image} alt={`${r.title}, ${(r.kind || r.page).toLowerCase()}`} style={{ aspectRatio: r.ratio }} />
+            {r.video ? (
+              <video key={r.video} src={r.video} poster={r.image} controls muted loop playsInline autoPlay aria-label={`${r.title}, clip`} style={{ aspectRatio: r.ratio }} />
+            ) : (
+              <img src={r.image} alt={`${r.title}, ${(r.kind || r.page).toLowerCase()}`} style={{ aspectRatio: r.ratio }} />
+            )}
           </figure>
           <h2 className="title st" style={k(2)}>
             {r.title}
@@ -64,7 +68,7 @@ export function Inspector({ ref, open, reference: r, root, onClose, onStep }: Pr
                   <Swatch key={p.hex + p.name} {...p} />
                 ))}
               </div>
-              <span className="est">{r.measured ? "Read from the live CSS" : "Estimated from the image"}</span>
+              <span className="est">{r.measured ? "Read from the live CSS" : r.video ? "Estimated from the clip" : "Estimated from the image"}</span>
             </dd>
             <dt className="lab">Type</dt>
             <dd>{r.type}</dd>
@@ -76,6 +80,25 @@ export function Inspector({ ref, open, reference: r, root, onClose, onStep }: Pr
                 ))}
               </ol>
             </dd>
+            {r.motion.length > 0 && (
+              <>
+                <dt className="lab">Motion</dt>
+                <dd>
+                  <dl className="motion">
+                    {r.motion.map((m) => {
+                      // "Load: a stroke sweeps off" -> the trigger as a small label, the rest as the line
+                      const [, when, what] = /^([^:]{1,20}):\s*(.+)$/.exec(m) ?? [];
+                      return (
+                        <div key={m}>
+                          <dt>{when ?? "·"}</dt>
+                          <dd>{what ?? m}</dd>
+                        </div>
+                      );
+                    })}
+                  </dl>
+                </dd>
+              </>
+            )}
             <dt className="lab">Filed under</dt>
             <dd>
               {r.page} · {r.look}

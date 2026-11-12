@@ -4,7 +4,7 @@ import type { Reference } from "../../shared/types.ts";
 import { NO_FILTERS, columnCount, deal, filterRefs, groups } from "./vault.ts";
 
 const ref = (over: Partial<Reference>): Reference => ({
-  id: "01", slug: "01-a", title: "A", kind: "", source: "screenshot", image: "", ratio: 1, page: "Landing page", look: "Painterly",
+  id: "01", slug: "01-a", title: "A", kind: "", source: "screenshot", image: "", ratio: 1, motion: [], page: "Landing page", look: "Painterly",
   tags: [], measured: false, vibe: "", palette: [], type: "", steal: [], note: "", file: "", ...over,
 });
 

@@ -27,4 +27,12 @@ export const IMAGE_TYPES: Record<string, string> = {
   "image/avif": ".avif",
 };
 
+export const VIDEO_TYPES: Record<string, string> = {
+  "video/mp4": ".mp4",
+  "video/webm": ".webm",
+  "video/quicktime": ".mov",
+};
+
 export const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
+/** Clips are short screen recordings of one interaction; this leaves room for a minute of 1080p. */
+export const MAX_VIDEO_BYTES = 100 * 1024 * 1024;

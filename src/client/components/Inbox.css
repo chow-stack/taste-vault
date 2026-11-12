@@ -4,7 +4,7 @@
   display: grid; grid-template-columns: 30px 1fr 18px; gap: 8px; align-items: center;
   padding: 6px 0; border-bottom: var(--line) solid var(--line-p); font-size: max(11px, 0.9em);
 }
-.wait li img, .wait li .ph {
+.wait li img, .wait li video, .wait li .ph {
   width: 30px; height: 22px; object-fit: cover; border-radius: 2px;
   background: var(--panel-text); color: var(--panel); display: grid; place-items: center; font-size: 11px;
 }

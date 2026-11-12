@@ -3,7 +3,8 @@
  *  vault/references/<slug>.md   the written notes, one file per reference
  *  vault/references/<image>     its image
  *  vault/inbox/<id>.json        something waiting for Claude Code to write its notes
- *  vault/inbox/<id>.<ext>       the dropped screenshot, for screenshot items
+ *  vault/inbox/<id>.<ext>       the dropped screenshot or clip
+ *  vault/inbox/<id>.frames/     stills pulled from a clip by npm run frames, deleted once written up
  */
 import { randomBytes } from "node:crypto";
 import { watch, type FSWatcher } from "node:fs";
@@ -13,7 +14,7 @@ import { imageSize } from "image-size";
 import { z } from "zod";
 import { normalizeLink } from "../shared/links.ts";
 import type { InboxItem, Reference, VaultState } from "../shared/types.ts";
-import { IMAGE_TYPES, MAX_UPLOAD_BYTES } from "./config.ts";
+import { IMAGE_TYPES, MAX_UPLOAD_BYTES, MAX_VIDEO_BYTES, VIDEO_TYPES } from "./config.ts";
 import { parseReference, writeNote } from "./markdown.ts";
 
 export class VaultError extends Error {
@@ -27,13 +28,13 @@ const INBOX_ID = /^\d{8}-\d{6}-[a-f0-9]{4}$/;
 
 const InboxFile = z.object({
   id: z.string().regex(INBOX_ID),
-  source: z.enum(["screenshot", "link"]),
+  source: z.enum(["screenshot", "link", "video"]),
   name: z.string(),
   file: z.string().optional(),
   added: z.string(),
 });
 
-const NOT_AN_IMAGE = "Only image files can go in. Try a PNG, JPG or WebP screenshot.";
+const NOT_AN_IMAGE = "Only images and video clips can go in. Try a PNG, JPG or WebP screenshot, or an MP4, MOV or WebM clip.";
 const DETECTED: Record<string, string> = { png: ".png", jpg: ".jpg", webp: ".webp", gif: ".gif", heif: ".avif" };
 
 /** The file extension that matches what the bytes actually are, or undefined if they are not a known image. */
@@ -44,6 +45,15 @@ function imageExt(bytes: Uint8Array) {
   } catch {
     return undefined;
   }
+}
+
+const ascii = (bytes: Uint8Array, from: number, to: number) => String.fromCharCode(...bytes.subarray(from, to));
+
+/** True when the bytes really are the kind of video the extension says: MP4 and MOV share a container, WebM is its own. */
+function isVideo(bytes: Uint8Array, ext: string) {
+  if (ext === ".mp4" || ext === ".mov") return ascii(bytes, 4, 8) === "ftyp";
+  if (ext === ".webm") return bytes[0] === 0x1a && bytes[1] === 0x45 && bytes[2] === 0xdf && bytes[3] === 0xa3 && ascii(bytes, 4, 64).includes("webm");
+  return false;
 }
 
 /** Writes to a temporary file first, so a reader never sees half a file. */
@@ -87,10 +97,11 @@ export class Vault {
         const slug = f.slice(0, -3);
         try {
           const parsed = parseReference(await readFile(path.join(this.refsDir, f), "utf8"), slug);
-          const { imageFile, ...rest } = parsed;
+          const { imageFile, videoFile, ...rest } = parsed;
           return {
             ...rest,
             image: `/files/references/${encodeURIComponent(imageFile)}`,
+            ...(videoFile ? { video: `/files/references/${encodeURIComponent(videoFile)}` } : {}),
             ratio: await this.ratio(path.join(this.refsDir, imageFile)),
             file: path.relative(path.dirname(this.root), path.join(this.refsDir, f)),
           } satisfies Reference;
@@ -129,7 +140,7 @@ export class Vault {
             source: item.source,
             name: item.name,
             added: item.added,
-            ...(item.file ? { image: `/files/inbox/${encodeURIComponent(item.file)}` } : {}),
+            ...(item.file ? { [item.source === "video" ? "video" : "image"]: `/files/inbox/${encodeURIComponent(item.file)}` } : {}),
           } satisfies InboxItem;
         } catch {
           return null;
@@ -139,19 +150,23 @@ export class Vault {
     return items.filter((i) => i !== null);
   }
 
-  async addScreenshot(file: File): Promise<InboxItem> {
-    const claimed = IMAGE_TYPES[file.type];
+  /** Takes a dropped screenshot or clip. */
+  async addFile(file: File): Promise<InboxItem> {
+    const video = VIDEO_TYPES[file.type];
+    const claimed = video ?? IMAGE_TYPES[file.type];
     if (!claimed) throw new VaultError(NOT_AN_IMAGE);
-    if (file.size > MAX_UPLOAD_BYTES) throw new VaultError("That image is over 25 MB. Try a smaller screenshot.", 413);
+    if (video && file.size > MAX_VIDEO_BYTES) throw new VaultError("That clip is over 100 MB. Trim it to the one interaction you want.", 413);
+    if (!video && file.size > MAX_UPLOAD_BYTES) throw new VaultError("That image is over 25 MB. Try a smaller screenshot.", 413);
     const bytes = new Uint8Array(await file.arrayBuffer());
-    // the browser's file type is only a claim: check the bytes really are that kind of image
-    if (imageExt(bytes) !== claimed) throw new VaultError(NOT_AN_IMAGE);
+    // the browser's file type is only a claim: check the bytes really are that kind of file
+    if (video ? !isVideo(bytes, video) : imageExt(bytes) !== claimed) throw new VaultError(NOT_AN_IMAGE);
+    const source = video ? ("video" as const) : ("screenshot" as const);
     const id = newInboxId();
-    const name = path.basename(file.name || `screenshot${claimed}`).slice(0, 200);
-    const meta = { id, source: "screenshot" as const, name, file: `${id}${claimed}`, added: new Date().toISOString() };
+    const name = path.basename(file.name || `${source}${claimed}`).slice(0, 200);
+    const meta = { id, source, name, file: `${id}${claimed}`, added: new Date().toISOString() };
     await writeAtomic(path.join(this.inboxDir, meta.file), bytes);
     await writeAtomic(path.join(this.inboxDir, `${id}.json`), `${JSON.stringify(meta, null, 2)}\n`);
-    return { id, source: "screenshot", name, added: meta.added, image: `/files/inbox/${meta.file}` };
+    return { id, source, name, added: meta.added, [video ? "video" : "image"]: `/files/inbox/${meta.file}` };
   }
 
   async addLink(raw: string): Promise<InboxItem> {
@@ -169,7 +184,7 @@ export class Vault {
     if (!INBOX_ID.test(id)) throw new VaultError("Unknown item.", 404);
     const files = (await readdir(this.inboxDir)).filter((f) => f.startsWith(`${id}.`));
     if (!files.length) throw new VaultError("That item is no longer waiting.", 404);
-    await Promise.all(files.map((f) => rm(path.join(this.inboxDir, f), { force: true })));
+    await Promise.all(files.map((f) => rm(path.join(this.inboxDir, f), { recursive: true, force: true })));
   }
 
   async setNote(slug: string, note: string) {

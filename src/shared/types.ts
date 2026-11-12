@@ -1,6 +1,6 @@
 /** Shapes shared by the server and the client. The server builds these from the files in vault/. */
 
-export type Source = "screenshot" | "link";
+export type Source = "screenshot" | "link" | "video";
 
 export interface Swatch {
   name: string;
@@ -18,8 +18,10 @@ export interface Reference {
   source: Source;
   /** The live address, for references that came in as a link. */
   url?: string;
-  /** URL the browser can load the image from. */
+  /** URL the browser can load the image from. For clips this is a still frame. */
   image: string;
+  /** URL of the clip, for references that came in as a video. */
+  video?: string;
   /** Width divided by height of the image. */
   ratio: number;
   /** Filed under: the kind of page (Landing page, Portfolio...) and the look (Painterly...). */
@@ -32,6 +34,8 @@ export interface Reference {
   palette: Swatch[];
   type: string;
   steal: string[];
+  /** What moves and how, for clips. Empty for stills. */
+  motion: string[];
   note: string;
   /** Path of the notes file relative to the project, e.g. vault/references/01-noir-studio.md */
   file: string;
@@ -42,8 +46,10 @@ export interface InboxItem {
   source: Source;
   /** Original file name for screenshots, the address for links. */
   name: string;
-  /** Preview image URL, for screenshots. */
+  /** Preview image URL, for screenshots and captured links. */
   image?: string;
+  /** Clip URL, for videos. */
+  video?: string;
   added: string;
 }
 
