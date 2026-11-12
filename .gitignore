@@ -1,0 +1,24 @@
+# dependencies and builds
+node_modules/
+dist/
+coverage/
+
+# your vault stays on your machine: references and inbox items are personal,
+# and screenshots of other people's work should not be republished by accident.
+# Delete these four lines if you want to keep your vault in git.
+vault/references/*
+!vault/references/.gitkeep
+vault/inbox/*
+!vault/inbox/.gitkeep
+
+# local settings and secrets
+.env
+.env.*
+.claude/settings.local.json
+
+# system and editor files
+.DS_Store
+*.log
+*.tmp
+.vscode/
+.idea/

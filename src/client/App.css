@@ -1,0 +1,16 @@
+/* Three panels side by side: the filter rail, the contact sheet, and the inspector that grows in from the right. */
+.app { display: flex; height: 100dvh; }
+.sheet {
+  flex: 1; min-width: 0; min-height: 0; overflow-y: auto;
+  background: var(--sheet); color: var(--sheet-text);
+  container-type: inline-size;
+}
+
+.sheet-msg { padding: 60px var(--pad); max-width: 30em; }
+.sheet-msg p { font-size: 1.5rem; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 16px; }
+.sheet-msg button { text-decoration: underline; text-underline-offset: 3px; }
+
+@media (max-width: 860px) {
+  .app { display: block; height: auto; }
+  .sheet { overflow: visible; }
+}

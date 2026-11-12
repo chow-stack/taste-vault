@@ -1,0 +1,62 @@
+/* The Light Table look. Colours come in a dark and a light set; everything else is shared. */
+:root {
+  --panel: #111212;
+  --panel-text: #eef2f3;
+  --sheet: #0f1010;
+  --sheet-text: #eef2f3;
+  --accent: #d6bf6f;
+  --accent-text: #0d0d0d;
+  --warn: #ff7b6e;
+  --drawer-shadow: rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+
+  /* derived */
+  --field: color-mix(in srgb, var(--panel) 93%, var(--panel-text));
+  --dim-p: color-mix(in srgb, var(--panel-text) 68%, var(--panel));
+  --dim-i: color-mix(in srgb, var(--sheet-text) 68%, var(--sheet));
+  --faint-p: color-mix(in srgb, var(--panel-text) 45%, var(--panel));
+  --line-p: color-mix(in srgb, var(--panel-text) 14%, transparent);
+  --line-i: color-mix(in srgb, var(--sheet-text) 14%, transparent);
+
+  /* type */
+  --font: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --fs: 16px;
+  --lh: 1.45;
+  --track: -0.01em;
+  --mark-size: 3rem;
+  --title-size: 2.6rem;
+  --vibe-size: 1.1rem;
+  --lab-size: 12px;
+
+  /* space and shape */
+  --pad: 18px;
+  --gap: 16px;
+  --row-gap: 20px;
+  --radius: 3px;
+  --line: 1px;
+
+  /* motion */
+  --dur: 250ms;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --open-dur: 560ms;
+  --open-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root[data-theme="light"] {
+  --panel: #f7f6f2;
+  --panel-text: #111212;
+  --sheet: #efeee9;
+  --sheet-text: #111212;
+  --accent: #9c7f22;
+  --accent-text: #ffffff;
+  --warn: #b3261e;
+  --drawer-shadow: rgba(0, 0, 0, 0.16);
+  color-scheme: light;
+}
+
+/* switching modes cross-fades the colours instead of snapping */
+:root.theming *,
+:root.theming *::before,
+:root.theming *::after {
+  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease, outline-color 0.45s ease !important;
+}

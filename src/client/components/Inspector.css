@@ -1,0 +1,73 @@
+/* The inspector is a column that grows from zero width, pushing the sheet aside.
+   Its contents keep their full width, so they slide in with the moving edge instead of squashing. */
+.insp {
+  flex: none; width: 0; overflow: hidden; outline: none;
+  position: relative; z-index: 3;
+  background: var(--panel); color: var(--panel-text);
+  border-left: 0 solid var(--line-p);
+  transition: width var(--open-dur) var(--open-ease), border-width 0s linear var(--open-dur);
+}
+.insp.open {
+  width: var(--insp-w); border-left-width: var(--line);
+  transition: width var(--open-dur) var(--open-ease), border-width 0s;
+}
+.insp-in {
+  width: var(--insp-w); height: 100%; overflow-y: auto;
+  padding: 14px var(--pad) 26px;
+  visibility: hidden; transition: visibility 0s linear var(--open-dur);
+}
+.insp.open .insp-in { visibility: visible; transition: visibility 0s; }
+
+/* as it opens, the contents follow in one after another */
+@keyframes follow-in { from { opacity: 0; transform: translateY(10px); } }
+.insp.open .st {
+  animation: follow-in calc(var(--open-dur) * 0.9) var(--open-ease) backwards;
+  animation-delay: calc(var(--open-dur) * 0.22 + var(--k, 6) * 45ms);
+}
+
+.ihead { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+.ihead > .lab { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--dim-p); }
+.ihead div { display: flex; gap: 6px; }
+
+.insp figure img { width: 100%; height: auto; max-height: 46vh; object-fit: cover; object-position: top; border-radius: var(--radius); }
+.insp .title { font-size: var(--title-size); font-weight: 500; line-height: 0.92; letter-spacing: -0.04em; margin-top: 18px; overflow-wrap: anywhere; }
+.insp .live { display: inline-block; margin-top: 10px; color: var(--dim-p); text-decoration: none; }
+.insp .live:hover { color: var(--panel-text); text-decoration: underline; text-underline-offset: 3px; }
+.insp .vibe { font-size: var(--vibe-size); line-height: 1.3; letter-spacing: -0.02em; margin-top: 16px; }
+
+.spec { margin-top: 18px; display: grid; grid-template-columns: 92px 1fr; }
+.spec > * { border-top: var(--line) solid var(--line-p); padding: 9px 0 11px; }
+.spec dt { padding-top: 11px; padding-right: 10px; }
+
+/* palette as a strip of colour blocks; click one to copy its hex */
+.pal { display: flex; }
+.sw { flex: 1; min-width: 0; text-align: left; font-variant-numeric: tabular-nums; font-size: max(11px, 0.78em); color: var(--dim-p); }
+.sw b { display: block; height: 44px; margin-bottom: 5px; }
+.sw:first-child b { border-radius: var(--radius) 0 0 var(--radius); }
+.sw:last-child b { border-radius: 0 var(--radius) var(--radius) 0; }
+.sw:hover, .sw.done { color: var(--panel-text); }
+.est { display: block; margin-top: 8px; font-size: max(11px, 0.78em); color: var(--dim-p); }
+
+.steal { list-style: none; counter-reset: s; }
+.steal li { counter-increment: s; display: grid; grid-template-columns: 1.8em 1fr; padding-bottom: 5px; }
+.steal li::before { content: counter(s, decimal-leading-zero); color: var(--dim-p); font-variant-numeric: tabular-nums; font-size: 0.86em; padding-top: 0.1em; }
+
+.note label { display: flex; justify-content: space-between; gap: 10px; padding: 11px 0 6px; border-top: var(--line) solid var(--line-p); }
+.note label span:last-child { color: var(--dim-p); }
+.note textarea {
+  width: 100%; min-height: 84px; resize: vertical; outline: none; line-height: 1.45;
+  background: var(--field); border: 1px solid transparent; border-radius: var(--radius); padding: 9px 10px;
+}
+.note textarea:focus { border-color: var(--panel-text); }
+.note textarea::placeholder { color: var(--dim-p); }
+.insp .copy { margin-top: 12px; }
+
+/* on a phone there is no room to push, so it slides over the page instead */
+@media (max-width: 860px) {
+  .insp, .insp.open {
+    position: fixed; inset: 0; z-index: 20; width: 100vw; border: 0;
+    transform: translateX(100%); transition: transform var(--open-dur) var(--open-ease);
+  }
+  .insp.open { transform: none; }
+  .insp-in { width: 100%; }
+}

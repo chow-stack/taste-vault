@@ -1,0 +1,23 @@
+.drop {
+  position: relative; display: block; overflow: hidden; cursor: pointer;
+  aspect-ratio: 16 / 9; border-radius: var(--radius);
+  background: #111; color: #f6f5f1;
+  box-shadow: inset 0 0 0 var(--line) var(--line-p);
+}
+.drop canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.7; transition: opacity var(--dur); }
+.drop:hover canvas, .drop.over canvas { opacity: 1; }
+.drop.over { outline: 2px solid var(--panel-text); outline-offset: 2px; }
+.drop:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.drop span { position: absolute; left: 10px; right: 10px; bottom: 9px; font-size: 0.93em; font-weight: 500; line-height: 1.25; text-shadow: 0 1px 8px #000; }
+.drop small { display: block; font-weight: 400; font-size: max(11px, 0.86em); opacity: 0.9; }
+.drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+.link { display: flex; gap: 8px; align-items: center; margin-top: 10px; border-bottom: var(--line) solid var(--panel-text); }
+.link input { flex: 1; min-width: 0; border: 0; background: none; padding: 7px 0; outline: none; }
+.link input::placeholder { color: var(--dim-p); }
+
+.err { color: var(--warn); font-size: max(11px, 0.86em); margin-top: 6px; min-height: 1.4em; }
+
+@media (max-width: 860px) {
+  .drop { aspect-ratio: 16 / 5; }
+}

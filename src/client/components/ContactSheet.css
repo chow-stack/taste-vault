@@ -1,0 +1,19 @@
+.frames { display: flex; align-items: flex-start; gap: var(--gap); padding: var(--pad); }
+.col { flex: 1 1 0; min-width: 0; }
+
+.frame { position: relative; display: block; width: 100%; margin-bottom: var(--row-gap); text-align: left; color: var(--dim-i); transition: color var(--dur); }
+.frame .im {
+  display: block; overflow: hidden; border-radius: var(--radius);
+  background: color-mix(in srgb, var(--sheet-text) 7%, var(--sheet));
+  outline: 1px solid transparent; outline-offset: 3px;
+  transition: outline-color var(--dur);
+}
+/* every frame is cropped to 4:3 from the top, so the sheet reads as an even contact sheet */
+.frame img {
+  width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: top;
+  transition: transform var(--dur) var(--ease);
+}
+.frame:hover img { transform: scale(1.03); }
+.frame[aria-pressed="true"] { color: var(--sheet-text); }
+.frame[aria-pressed="true"] .im { outline-color: var(--accent); }
+.frame .lab { display: block; padding-top: 7px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

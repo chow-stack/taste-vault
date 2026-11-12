@@ -1,0 +1,14 @@
+.wait { margin-top: 6px; }
+.wait h2 { display: flex; justify-content: space-between; color: var(--dim-p); padding-bottom: 6px; border-bottom: var(--line) solid var(--line-p); }
+.wait li {
+  display: grid; grid-template-columns: 30px 1fr 18px; gap: 8px; align-items: center;
+  padding: 6px 0; border-bottom: var(--line) solid var(--line-p); font-size: max(11px, 0.9em);
+}
+.wait li img, .wait li .ph {
+  width: 30px; height: 22px; object-fit: cover; border-radius: 2px;
+  background: var(--panel-text); color: var(--panel); display: grid; place-items: center; font-size: 11px;
+}
+.wait li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wait li button { opacity: 0.5; display: grid; place-items: center; }
+.wait li button:hover { opacity: 1; }
+.wait .hint { font-size: max(11px, 0.86em); color: var(--dim-p); margin: 8px 0; }
