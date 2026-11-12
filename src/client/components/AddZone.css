@@ -1,5 +1,5 @@
 .drop {
-  position: relative; display: block; overflow: hidden; cursor: pointer;
+  position: relative; display: block; overflow: hidden; cursor: var(--cursor-click);
   aspect-ratio: 16 / 9; border-radius: var(--radius);
   background: #111; color: #f6f5f1;
   box-shadow: inset 0 0 0 var(--line) var(--line-p);
@@ -10,7 +10,7 @@
 .drop:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
 .drop span { position: absolute; left: 10px; right: 10px; bottom: 9px; font-size: 0.93em; font-weight: 500; line-height: 1.25; text-shadow: 0 1px 8px #000; }
 .drop small { display: block; font-weight: 400; font-size: max(11px, 0.86em); opacity: 0.9; }
-.drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.drop input { position: absolute; inset: 0; opacity: 0; cursor: var(--cursor-click); }
 
 .link { display: flex; gap: 8px; align-items: center; margin-top: 10px; border-bottom: var(--line) solid var(--panel-text); }
 .link input { flex: 1; min-width: 0; border: 0; background: none; padding: 7px 0; outline: none; }

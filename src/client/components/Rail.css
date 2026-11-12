@@ -18,7 +18,7 @@
 .f:hover span:first-child { text-decoration: underline; text-underline-offset: 3px; }
 .f[aria-pressed="true"] { font-weight: 600; }
 .f[aria-pressed="true"] span:first-child::before { content: "→ "; }
-.f:disabled { color: var(--faint-p); cursor: default; }
+.f:disabled { color: var(--faint-p); }
 .f:disabled:hover span:first-child { text-decoration: none; }
 
 .add { margin-top: auto; }

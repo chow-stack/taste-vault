@@ -1,4 +1,9 @@
 * { box-sizing: border-box; }
+/* cursor: crosshair everywhere; swap --cursor-click to change the clicker */
+:root { --cursor: crosshair; --cursor-click: crosshair; }
+*, *::before, *::after { cursor: var(--cursor); }
+a, button, label, summary, select, [role="button"] { cursor: var(--cursor-click); }
+input:not([type="file"]), textarea, [contenteditable] { cursor: text; }
 html { scrollbar-color: color-mix(in srgb, var(--sheet-text) 30%, var(--sheet)) transparent; }
 body {
   margin: 0;
@@ -16,7 +21,7 @@ h1, h2, h3, p, ul, dl, dd, figure { margin: 0; padding: 0; }
 ul { list-style: none; }
 img, canvas { display: block; max-width: 100%; }
 button, input, textarea { font: inherit; color: inherit; letter-spacing: inherit; }
-button { background: none; border: 0; padding: 0; cursor: pointer; }
+button { background: none; border: 0; padding: 0; }
 
 /* small labels */
 .lab { font-size: var(--lab-size); letter-spacing: 0.03em; font-weight: 500; }
